@@ -361,6 +361,17 @@ server.listen(PORT, "127.0.0.1", function () {
   console.log("  Database file:        " + DB_FILE);
   console.log("  Loaded:               " + counts);
   console.log("");
+  console.log("  Leave this window open while you study. Ctrl+C to stop.");
+  console.log("");
+
+  // Open the browser on start. Set NO_OPEN=1 to skip.
+  if (!process.env.NO_OPEN) {
+    const url = "http://localhost:" + PORT;
+    const opener = process.platform === "win32" ? 'start "" "' + url + '"'
+                 : process.platform === "darwin" ? 'open "' + url + '"'
+                 : 'xdg-open "' + url + '"';
+    require("child_process").exec(opener, function () {});
+  }
 });
 
 server.on("error", function (err) {
