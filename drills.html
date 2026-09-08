@@ -1,0 +1,1663 @@
+<!doctype html>
+<html lang="en" data-theme="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frontend Interview Drills</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4F6FA;
+  --surface: #FFFFFF;
+  --surface-2: #EDF0F7;
+  --text: #171B26;
+  --text-muted: #5A6272;
+  --text-faint: #9BA3B2;
+  --accent: #3651D4;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E7EBFC;
+  --accent-soft-border: #C9D2F7;
+  --done: #1C9A6C;
+  --done-soft: #E3F6EE;
+  --warn: #C2410C;
+  --star: #D9A209;
+  --border: #DFE3ED;
+  --shadow: 0 1px 2px rgba(23,27,38,0.04), 0 8px 24px -12px rgba(23,27,38,0.10);
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1219; --surface: #161A24; --surface-2: #1D2230;
+    --text: #E8EAF1; --text-muted: #9AA2B5; --text-faint: #666E82;
+    --accent: #8298FF; --accent-ink: #10142A; --accent-soft: #232B47; --accent-soft-border: #34406B;
+    --done: #4FD8A2; --done-soft: #16302A; --warn: #F08A5D; --star: #E8BE49;
+    --border: #262C3B;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0F1219; --surface: #161A24; --surface-2: #1D2230;
+  --text: #E8EAF1; --text-muted: #9AA2B5; --text-faint: #666E82;
+  --accent: #8298FF; --accent-ink: #10142A; --accent-soft: #232B47; --accent-soft-border: #34406B;
+  --done: #4FD8A2; --done-soft: #16302A; --warn: #F08A5D; --star: #E8BE49;
+  --border: #262C3B;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px 90px; }
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+header.top { margin-bottom: 22px; }
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px;
+}
+
+h1 {
+  font-size: clamp(28px, 4vw, 38px); font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.08; margin: 0 0 10px; text-wrap: balance;
+}
+
+.sub { font-size: 15.5px; line-height: 1.55; color: var(--text-muted); max-width: 66ch; margin: 0 0 24px; }
+.sub .mono { font-size: 13.5px; color: var(--text); }
+
+/* statbar */
+.statbar {
+  display: flex; align-items: center; gap: 18px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); flex-wrap: wrap;
+}
+.statbar .figure { display: flex; flex-direction: column; gap: 2px; }
+.statbar .figure .num {
+  font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 600;
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.statbar .figure .lbl {
+  font-size: 11.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em;
+}
+.statbar .track {
+  flex: 1 1 120px; min-width: 100px; height: 8px;
+  border-radius: 99px; background: var(--surface-2); overflow: hidden;
+}
+.statbar .track > span {
+  display: block; height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--done));
+  border-radius: 99px; transition: width 0.25s ease;
+}
+
+.controls { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+
+button.chip {
+  font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600;
+  padding: 7px 13px; border-radius: 99px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text-muted); cursor: pointer;
+}
+button.chip[aria-pressed="true"] {
+  background: var(--accent-soft); border-color: var(--accent-soft-border); color: var(--accent);
+}
+button.chip:hover { color: var(--text); }
+button.chip[aria-pressed="true"]:hover { color: var(--accent); }
+
+/* storage bar */
+.storagebar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: 14px 0 0; padding: 11px 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 11px; font-size: 13px; color: var(--text-muted);
+}
+.storagebar .dot {
+  width: 8px; height: 8px; border-radius: 99px; background: var(--text-faint); flex: none;
+}
+.storagebar.linked .dot { background: var(--done); }
+.storagebar.needs .dot { background: var(--star); }
+.storagebar .where { flex: 1; min-width: 180px; }
+.storagebar .where b { color: var(--text); font-weight: 600; }
+.storagebar .where .mono { font-size: 12px; color: var(--text); }
+
+/* search / toolbar */
+.searchrow { display: flex; gap: 10px; margin: 14px 0 0; flex-wrap: wrap; }
+
+.searchbox {
+  flex: 1 1 260px; display: flex; align-items: center; gap: 9px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0 12px; height: 40px;
+}
+.searchbox:focus-within { border-color: var(--accent-soft-border); }
+.searchbox svg { width: 16px; height: 16px; color: var(--text-faint); flex: none; }
+.searchbox input {
+  flex: 1; border: none; background: transparent; outline: none;
+  font-family: 'Manrope', sans-serif; font-size: 14px; color: var(--text); height: 100%;
+}
+.searchbox input::placeholder { color: var(--text-faint); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Manrope', sans-serif; font-size: 13.5px; font-weight: 600;
+  padding: 0 15px; height: 40px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); cursor: pointer; white-space: nowrap;
+}
+.btn:hover { border-color: var(--accent-soft-border); color: var(--accent); }
+.btn svg { width: 14px; height: 14px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { color: var(--accent-ink); filter: brightness(1.06); }
+.btn.good { background: var(--done); border-color: var(--done); color: var(--accent-ink); }
+.btn.good:hover { color: var(--accent-ink); filter: brightness(1.06); }
+.btn.small { height: 32px; font-size: 12.5px; padding: 0 11px; border-radius: 8px; }
+
+.toolrow { display: flex; align-items: center; gap: 8px; margin: 14px 0 6px; flex-wrap: wrap; }
+.toolrow .spacer { flex: 1; }
+
+button.ghost {
+  font-family: 'Manrope', sans-serif; font-size: 12.5px; font-weight: 600;
+  color: var(--text-muted); background: transparent; border: none; cursor: pointer;
+  padding: 6px 4px; text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-color: var(--border);
+}
+button.ghost:hover { color: var(--accent); text-decoration-color: var(--accent); }
+button.ghost.danger:hover { color: var(--warn); text-decoration-color: var(--warn); }
+
+nav.jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 30px; }
+nav.jump a {
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 500;
+  color: var(--text-muted); background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 9px; border-radius: 7px; text-decoration: none;
+}
+nav.jump a:hover { border-color: var(--accent-soft-border); color: var(--accent); }
+nav.jump a .n { color: var(--text-faint); }
+
+/* categories */
+details.cat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 14px;
+  box-shadow: var(--shadow); scroll-margin-top: 16px;
+}
+details.cat[hidden] { display: none; }
+
+details.cat > summary {
+  list-style: none; cursor: pointer; padding: 16px 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+details.cat > summary::-webkit-details-marker { display: none; }
+
+.catTag {
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600;
+  letter-spacing: 0.04em; color: var(--accent); background: var(--accent-soft);
+  border: 1px solid var(--accent-soft-border); padding: 4px 8px; border-radius: 6px; flex: none;
+}
+
+.catTitle { font-weight: 700; font-size: 16px; flex: 1; }
+.catCount {
+  font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+  font-variant-numeric: tabular-nums; color: var(--text-faint); flex: none;
+}
+
+.chev { flex: none; width: 18px; height: 18px; color: var(--text-faint); transition: transform 0.18s ease; }
+details.cat[open] > summary .chev { transform: rotate(90deg); }
+
+.catBody { border-top: 1px solid var(--border); padding: 6px 8px 10px; }
+
+/* question rows */
+.qrow { border-radius: 9px; }
+.qrow[hidden] { display: none; }
+.qrow.open { background: var(--surface-2); }
+
+.qhead { display: flex; align-items: flex-start; gap: 12px; padding: 10px; }
+.qrow:not(.open) .qhead:hover { background: var(--surface-2); border-radius: 9px; }
+
+.qcheck {
+  flex: none; width: 20px; height: 20px; margin-top: 1px;
+  border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+}
+.qrow.done .qcheck { background: var(--done); border-color: var(--done); }
+.qcheck svg { width: 13px; height: 13px; opacity: 0; color: #fff; }
+.qrow.done .qcheck svg { opacity: 1; }
+
+.qid {
+  flex: none; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+  color: var(--text-faint); padding-top: 2px; min-width: 46px;
+}
+
+.qmain { flex: 1; min-width: 0; cursor: pointer; }
+.qtext { font-size: 14.5px; line-height: 1.5; color: var(--text); }
+.qrow.done .qtext { color: var(--text-muted); }
+
+.qflags { display: flex; align-items: center; gap: 6px; margin-top: 5px; }
+.flag {
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 5px; color: var(--done); background: var(--done-soft);
+}
+.flag.muted { color: var(--text-faint); background: var(--surface-2); }
+
+.qtools { flex: none; display: flex; align-items: center; gap: 2px; }
+.iconbtn {
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; border-radius: 7px;
+  color: var(--text-faint); cursor: pointer; padding: 0;
+}
+.iconbtn:hover { background: var(--surface-2); color: var(--accent); }
+.iconbtn.danger:hover { color: var(--warn); }
+.iconbtn svg { width: 15px; height: 15px; }
+.iconbtn.starred { color: var(--star); }
+.qrow.open .iconbtn:hover { background: var(--surface); }
+
+/* answer editor */
+.qbody { padding: 0 10px 12px 52px; }
+.qbody[hidden] { display: none; }
+
+.qlabel {
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 0 0 6px;
+}
+
+textarea.answer, input.textline, textarea.textline {
+  width: 100%; font-family: 'Manrope', sans-serif; font-size: 14px; line-height: 1.6;
+  color: var(--text); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 11px 13px; outline: none; resize: vertical;
+}
+textarea.answer { min-height: 110px; }
+textarea.answer:focus, input.textline:focus, textarea.textline:focus { border-color: var(--accent-soft-border); }
+textarea.answer::placeholder, input.textline::placeholder { color: var(--text-faint); }
+
+.qbodyfoot {
+  display: flex; align-items: center; gap: 10px; margin-top: 8px;
+  font-size: 12px; color: var(--text-faint);
+}
+.qbodyfoot .spacer { flex: 1; }
+
+/* add forms */
+.addrow { padding: 8px 10px 4px; }
+.addform { display: flex; gap: 8px; align-items: flex-start; }
+.addbtn {
+  font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--text-muted); background: transparent;
+  border: 1px dashed var(--border); border-radius: 9px;
+  padding: 9px 12px; cursor: pointer; width: 100%; text-align: left;
+}
+.addbtn:hover { border-color: var(--accent-soft-border); color: var(--accent); }
+
+.empty { text-align: center; color: var(--text-faint); font-size: 14px; padding: 30px 0; }
+
+footer.note {
+  margin-top: 30px; font-size: 12.5px; color: var(--text-faint);
+  line-height: 1.6; max-width: 66ch;
+}
+footer.note .mono { font-size: 11.5px; }
+
+/* drill mode */
+.overlay {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(10,13,20,0.55); backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.overlay[hidden] { display: none; }
+
+.drill {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; box-shadow: 0 24px 60px -20px rgba(0,0,0,0.5);
+  width: min(640px, 100%); max-height: 86vh; overflow-y: auto; padding: 22px;
+}
+
+.drillHead { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.drillMeta { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--text-faint); flex: 1; }
+
+.drillQ {
+  font-size: 20px; font-weight: 700; line-height: 1.35;
+  letter-spacing: -0.01em; margin: 0 0 18px; text-wrap: pretty;
+}
+
+.drillAnswer {
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px; margin-bottom: 18px;
+}
+.drillLabel {
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 0 0 8px;
+}
+.answerText { font-size: 14.5px; line-height: 1.6; white-space: pre-wrap; color: var(--text); word-break: break-word; }
+.answerText.blank { color: var(--text-faint); font-style: italic; }
+
+.drillActions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.drillActions .spacer { flex: 1; }
+
+/* toast */
+.toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%);
+  z-index: 60; background: var(--text); color: var(--bg);
+  font-size: 13.5px; font-weight: 600; padding: 10px 16px;
+  border-radius: 99px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+}
+.toast[hidden] { display: none; }
+.toast.error { background: var(--warn); color: #fff; }
+
+@media (max-width: 620px) {
+  .wrap { padding: 28px 16px 70px; }
+  .statbar { padding: 14px; }
+  .controls { margin-left: 0; width: 100%; justify-content: flex-start; }
+  .qbody { padding-left: 10px; }
+  .qid { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">Interview Prep · Frontend</p>
+    <h1>Frontend Interview Drills</h1>
+    <p class="sub">Theory questions across your stack. Write your own answer to each one, mark it reviewed when you can say it out loud, and add questions as you meet them.</p>
+
+    <div class="statbar">
+      <div class="figure">
+        <span class="num" id="statReviewed">0 / 0</span>
+        <span class="lbl">Reviewed</span>
+      </div>
+      <div class="figure">
+        <span class="num" id="statAnswered">0</span>
+        <span class="lbl">Answered</span>
+      </div>
+      <div class="track"><span id="statTrack"></span></div>
+      <div class="controls">
+        <button class="chip" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" data-filter="todo" aria-pressed="false">To review</button>
+        <button class="chip" data-filter="done" aria-pressed="false">Reviewed</button>
+        <button class="chip" data-filter="starred" aria-pressed="false">Starred</button>
+        <button class="chip" data-filter="unanswered" aria-pressed="false">No answer</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="storagebar" id="storagebar">
+    <span class="dot"></span>
+    <span class="where" id="storageWhere">Loading…</span>
+    <button class="btn small" id="linkFile" hidden>Save to a JSON file…</button>
+    <button class="btn small" id="reconnectFile" hidden>Reconnect file</button>
+    <button class="btn small" id="openFile" hidden>Open a different file…</button>
+    <button class="btn small" id="unlinkFile" hidden>Unlink</button>
+  </div>
+
+  <div class="searchrow">
+    <div class="searchbox">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="9" r="5.5"/><path d="M13 13l4 4"/></svg>
+      <input type="search" id="search" placeholder="Search questions and answers…" autocomplete="off" spellcheck="false">
+    </div>
+    <button class="btn primary" id="startDrill">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 3.2v9.6c0 .5.55.8.96.53l7.2-4.8a.64.64 0 000-1.06l-7.2-4.8a.64.64 0 00-.96.53z"/></svg>
+      Drill me
+    </button>
+  </div>
+
+  <div class="toolrow">
+    <button class="ghost" id="expandAll">Expand all</button>
+    <button class="ghost" id="collapseAll">Collapse all</button>
+    <button class="ghost" id="addCategory">+ Category</button>
+    <span class="spacer"></span>
+    <button class="ghost" id="exportBtn">Download JSON</button>
+    <button class="ghost" id="importBtn">Import JSON</button>
+    <button class="ghost" id="themeBtn">Theme</button>
+    <button class="ghost danger" id="resetProgress">Reset progress</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+
+  <nav class="jump" id="jumpNav"></nav>
+
+  <main id="categories"></main>
+
+  <p class="empty" id="emptyState" hidden>Nothing matches this filter.</p>
+
+  <footer class="note">
+    Questions are prompts to research and rehearse, not a scored quiz. Your data is one JSON object — link it to a file on disk to keep it there, or download a copy any time.
+  </footer>
+
+</div>
+
+<div class="overlay" id="drillOverlay" hidden>
+  <div class="drill" role="dialog" aria-modal="true" aria-labelledby="drillQuestion">
+    <div class="drillHead">
+      <span class="catTag" id="drillTag">JS</span>
+      <span class="drillMeta" id="drillMeta">1 of 12</span>
+      <button class="iconbtn" id="drillClose" aria-label="Close drill">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+      </button>
+    </div>
+    <p class="drillQ" id="drillQuestion"></p>
+    <div class="drillAnswer" id="drillAnswerWrap" hidden>
+      <p class="drillLabel">Your answer</p>
+      <div class="answerText" id="drillAnswer"></div>
+    </div>
+    <div class="drillActions">
+      <button class="btn" id="drillReveal">Reveal answer</button>
+      <span class="spacer"></span>
+      <button class="btn" id="drillSkip">Skip</button>
+      <button class="btn good" id="drillGot">Got it</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================== seed ==== */
+
+  var SEED = [
+    { code: "JS", title: "JavaScript & ES6+", questions: [
+      "What's the difference between var, let, and const in terms of scope and hoisting?",
+      "Explain closures and describe a real scenario where they're useful.",
+      "What is the event loop, and how do microtasks differ from macrotasks?",
+      "What's the difference between == and ===?",
+      "Explain prototypal inheritance in JavaScript.",
+      "What's the difference between call, apply, and bind?",
+      "How does 'this' behave differently in arrow functions versus regular functions?",
+      "What are Promises, and how do async/await relate to them under the hood?",
+      "What's the difference between a shallow copy and a deep copy of an object?",
+      "Explain debouncing and throttling, and when you'd use each.",
+      "What's the difference between null and undefined?",
+      "At a high level, how does JavaScript's garbage collection work?"
+    ]},
+    { code: "TS", title: "TypeScript", questions: [
+      "What's the difference between interface and type?",
+      "What are generics, and why are they useful?",
+      "What's the difference between unknown and any?",
+      "What is type narrowing, and how do type guards help with it?",
+      "What are union types and intersection types?",
+      "What does the readonly modifier do, and when would you use it?",
+      "What are utility types like Partial, Pick, and Omit used for?",
+      "How does TypeScript's structural typing differ from nominal typing?",
+      "What's the difference between an enum and a union of string literals?",
+      "What is declaration merging?"
+    ]},
+    { code: "RE", title: "React", questions: [
+      "What's the difference between state and props?",
+      "Explain the React reconciliation process and how the virtual DOM fits in.",
+      "What are keys in lists for, and why do they matter for rendering?",
+      "What's the difference between controlled and uncontrolled components?",
+      "Explain useEffect's dependency array and common pitfalls with it.",
+      "What's the difference between useMemo and useCallback?",
+      "What is React Context, and when would you reach for it instead of a state library?",
+      "What causes unnecessary re-renders, and how can you prevent them?",
+      "What's the difference between a custom hook and a regular utility function?",
+      "How does React batch state updates?",
+      "What are error boundaries, and what kinds of errors can't they catch?",
+      "What's the difference between server components and client components?"
+    ]},
+    { code: "NX", title: "Next.js", questions: [
+      "What's the difference between server-side rendering, static generation, and client-side rendering?",
+      "How does the App Router differ from the Pages Router?",
+      "What are Server Components, and how do they differ from Client Components?",
+      "How does data fetching and caching work in Next.js by default?",
+      "What is Incremental Static Regeneration, and when would you use it?",
+      "How does Next.js handle routing and dynamic route segments?",
+      "What are route handlers (API routes) used for?",
+      "How does Next.js optimize images and fonts out of the box?",
+      "What's the difference between next/link navigation and a plain anchor tag?",
+      "How would you handle environment variables and secrets in a Next.js app?"
+    ]},
+    { code: "CS", title: "CSS & Layout", questions: [
+      "What's the difference between Flexbox and CSS Grid, and when would you pick one over the other?",
+      "Explain the CSS box model.",
+      "What's the difference between em, rem, %, and vh/vw units?",
+      "How is CSS specificity calculated?",
+      "What's the difference between position: absolute, relative, fixed, and sticky?",
+      "What is the cascade, and how do source order and specificity interact?",
+      "How would you approach responsive design without a utility framework like Tailwind?",
+      "What causes layout shift, and how can you prevent it?",
+      "What's the difference between CSS Modules, Sass, and utility-first CSS?",
+      "How do CSS custom properties work, and how do they differ from Sass variables?"
+    ]},
+    { code: "ST", title: "State Management", questions: [
+      "When would you reach for a state library like Zustand instead of React Context?",
+      "What's the difference between local component state, global state, and server state?",
+      "What problem does Zustand solve differently from Redux?",
+      "What is prop drilling, and what are common ways to avoid it?",
+      "How do you decide what belongs in global state versus what stays local?",
+      "What are the trade-offs of storing UI state and server-fetched data in the same store?"
+    ]},
+    { code: "TE", title: "Testing", questions: [
+      "What's the difference between unit tests, integration tests, and end-to-end tests?",
+      "What's the philosophy behind React Testing Library's 'test behavior, not implementation'?",
+      "What's the difference between a mock, a stub, and a spy?",
+      "What makes a test flaky, and how would you address it?",
+      "How would you test a component that depends on an API call?",
+      "What is snapshot testing, and what are its downsides?",
+      "What's the difference between getBy, queryBy, and findBy in React Testing Library?",
+      "How do you decide what's worth testing versus what isn't?"
+    ]},
+    { code: "AP", title: "REST, HTTP & APIs", questions: [
+      "What's the difference between REST and other API styles like GraphQL?",
+      "What do GET, POST, PUT, PATCH, and DELETE mean, and when is each appropriate?",
+      "What's the difference between 4xx and 5xx status codes? Name a few specific ones.",
+      "What is idempotency, and which HTTP methods are supposed to be idempotent?",
+      "What is CORS, and why does it exist?",
+      "What's the difference between authentication and authorization?",
+      "What is an OpenAPI spec used for, and how does client-code generation from it work?",
+      "What's the difference between cookies, local storage, and session storage for auth tokens?",
+      "What are the trade-offs of a JWT in local storage versus an HTTP-only cookie?"
+    ]},
+    { code: "RT", title: "Real-Time & SSE", questions: [
+      "What's the difference between polling, long-polling, WebSockets, and Server-Sent Events?",
+      "When would you choose SSE over WebSockets, and vice versa?",
+      "What are the limitations of SSE, for example connection limits or direction of data flow?",
+      "How does a browser handle a dropped SSE or WebSocket connection, and how would you handle reconnection?",
+      "How does structuring a frontend around a live data stream differ from structuring it around request/response?",
+      "How would you keep a UI consistent if live updates arrive out of order or are duplicated?"
+    ]},
+    { code: "PF", title: "Performance & Browser", questions: [
+      "What are the steps in the critical rendering path: parsing, layout, paint, composite?",
+      "What are Core Web Vitals (LCP, CLS, INP), and what does each measure?",
+      "What's the difference between code splitting and lazy loading?",
+      "How does browser caching work, for example cache-control headers and ETags?",
+      "What causes a memory leak in a frontend app, and how would you go about finding one?",
+      "What's the difference between debounce/throttle and requestAnimationFrame for performance-sensitive updates?",
+      "What triggers a repaint versus a reflow, and why does that distinction matter for performance?"
+    ]},
+    { code: "GT", title: "Git & Collaboration", questions: [
+      "What's the difference between git merge and git rebase?",
+      "What is a merge conflict, and how do you resolve one?",
+      "What's the difference between git fetch and git pull?",
+      "What's a reasonable branching strategy for a small team, and why?",
+      "What does git cherry-pick do, and when would you use it?",
+      "What's the difference between git reset and git revert?"
+    ]},
+    { code: "SQ", title: "SQL & PostgreSQL", questions: [
+      "What's the difference between INNER JOIN, LEFT JOIN, and RIGHT JOIN?",
+      "What's the difference between a primary key and a foreign key?",
+      "What's the difference between WHERE and HAVING?",
+      "What is database indexing, and how does it affect query performance?",
+      "What's the difference between normalization and denormalization?",
+      "What is a database transaction, and what do the ACID properties mean?"
+    ]}
+  ];
+
+  function makeId(prefix) {
+    return prefix + "_" + Math.random().toString(16).slice(2, 10) + Date.now().toString(16).slice(-4);
+  }
+  function nowIso() { return new Date().toISOString(); }
+
+  function buildSeedDb() {
+    var now = nowIso();
+    var categories = [];
+    var questions = [];
+    SEED.forEach(function (cat, ci) {
+      var categoryId = makeId("c");
+      categories.push({ id: categoryId, code: cat.code, title: cat.title, order: ci, createdAt: now });
+      cat.questions.forEach(function (text, qi) {
+        questions.push({
+          id: makeId("q"), categoryId: categoryId, text: text, answer: "",
+          status: "todo", starred: false, order: qi,
+          createdAt: now, updatedAt: now, reviewedAt: null
+        });
+      });
+    });
+    return { version: 1, createdAt: now, categories: categories, questions: questions };
+  }
+
+  function normalizeDb(raw) {
+    var cats = (raw && Array.isArray(raw.categories) ? raw.categories : []).map(function (c, i) {
+      return {
+        id: typeof c.id === "string" ? c.id : makeId("c"),
+        code: String(c.code || "??").toUpperCase().slice(0, 4),
+        title: String(c.title || "Untitled"),
+        order: isFinite(c.order) ? c.order : i,
+        createdAt: c.createdAt || nowIso()
+      };
+    });
+    var known = {};
+    cats.forEach(function (c) { known[c.id] = true; });
+    var qs = (raw && Array.isArray(raw.questions) ? raw.questions : []).map(function (q) {
+      return {
+        id: typeof q.id === "string" ? q.id : makeId("q"),
+        categoryId: String(q.categoryId || ""),
+        text: String(q.text || ""),
+        answer: typeof q.answer === "string" ? q.answer : "",
+        status: q.status === "reviewed" ? "reviewed" : "todo",
+        starred: q.starred === true,
+        order: isFinite(q.order) ? q.order : 0,
+        createdAt: q.createdAt || nowIso(),
+        updatedAt: q.updatedAt || nowIso(),
+        reviewedAt: q.reviewedAt || null
+      };
+    }).filter(function (q) { return known[q.categoryId] && q.text.trim() !== ""; });
+    if (!cats.length) throw new Error("That file has no categories in it");
+    return { version: 1, createdAt: (raw && raw.createdAt) || nowIso(), categories: cats, questions: qs };
+  }
+
+  /* =========================================================== storage ==== */
+  /* Two layers, both always on where available:
+     1. localStorage  - instant, automatic, survives a reload.
+     2. A real .json file you pick - written on every change through the
+        File System Access API. Chrome and Edge only; elsewhere the Download /
+        Import buttons cover the same ground manually. */
+
+  var LS_KEY = "drills.db.v1";
+  var FS_SUPPORTED = typeof window.showSaveFilePicker === "function";
+
+  var Store = {
+    handle: null,      // FileSystemFileHandle once a file is linked
+    fileName: "",
+    needsPermission: false
+  };
+
+  /* The file handle itself is stored in IndexedDB - it is a live object, not
+     something localStorage can hold. */
+  function idbHandle(mode, value) {
+    return new Promise(function (resolve) {
+      var open = indexedDB.open("drills-meta", 1);
+      open.onupgradeneeded = function () { open.result.createObjectStore("kv"); };
+      open.onerror = function () { resolve(null); };
+      open.onsuccess = function () {
+        var idb = open.result;
+        var tx = idb.transaction("kv", mode === "get" ? "readonly" : "readwrite");
+        var store = tx.objectStore("kv");
+        var req = mode === "get" ? store.get("file")
+                : mode === "put" ? store.put(value, "file")
+                : store.delete("file");
+        req.onsuccess = function () { resolve(mode === "get" ? req.result || null : true); };
+        req.onerror = function () { resolve(null); };
+        tx.oncomplete = function () { idb.close(); };
+      };
+    }).catch(function () { return null; });
+  }
+
+  function saveLocal() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(db)); return true; }
+    catch (e) { return false; }
+  }
+
+  function loadLocal() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      return raw ? normalizeDb(JSON.parse(raw)) : null;
+    } catch (e) { return null; }
+  }
+
+  // File writes are chained so two quick edits can never overlap on one stream.
+  var writeChain = Promise.resolve();
+  var pendingFileWrite = null;
+
+  function writeFileNow() {
+    if (!Store.handle || Store.needsPermission) return Promise.resolve();
+    var text = JSON.stringify(db, null, 2) + "\n";
+    writeChain = writeChain.then(function () {
+      return Store.handle.createWritable().then(function (w) {
+        return w.write(text).then(function () { return w.close(); });
+      });
+    }).catch(function (err) {
+      Store.needsPermission = true;
+      renderStorageBar();
+      toast("Could not write to " + Store.fileName + ": " + err.message, true);
+    });
+    return writeChain;
+  }
+
+  function scheduleFileWrite() {
+    clearTimeout(pendingFileWrite);
+    pendingFileWrite = setTimeout(writeFileNow, 500);
+  }
+
+  /* Every mutation funnels through here. */
+  function persist() {
+    var okLocal = saveLocal();
+    if (!okLocal && !Store.handle) toast("Browser storage is full or blocked", true);
+    scheduleFileWrite();
+  }
+
+  function linkNewFile() {
+    return window.showSaveFilePicker({
+      suggestedName: "drills-db.json",
+      types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
+    }).then(function (handle) {
+      Store.handle = handle;
+      Store.fileName = handle.name;
+      Store.needsPermission = false;
+      return idbHandle("put", handle);
+    }).then(function () {
+      return writeFileNow();
+    }).then(function () {
+      renderStorageBar();
+      toast("Now saving to " + Store.fileName);
+    }).catch(function (err) {
+      if (err && err.name === "AbortError") return;
+      toast(err.message || "Could not link that file", true);
+    });
+  }
+
+  function openExistingFile() {
+    return window.showOpenFilePicker({
+      types: [{ description: "JSON", accept: { "application/json": [".json"] } }],
+      multiple: false
+    }).then(function (handles) {
+      var handle = handles[0];
+      return handle.getFile().then(function (file) { return file.text(); }).then(function (text) {
+        var incoming = normalizeDb(JSON.parse(text));
+        if (!confirm("Load " + handle.name + " and save to it from now on?\n\n" +
+                     incoming.questions.length + " questions in " + incoming.categories.length +
+                     " categories. This replaces what is currently on screen.")) {
+          return;
+        }
+        db = incoming;
+        Store.handle = handle;
+        Store.fileName = handle.name;
+        Store.needsPermission = false;
+        saveLocal();
+        return idbHandle("put", handle).then(function () {
+          render();
+          renderStorageBar();
+          toast("Loaded " + handle.name);
+        });
+      });
+    }).catch(function (err) {
+      if (err && err.name === "AbortError") return;
+      toast(err.message || "Could not open that file", true);
+    });
+  }
+
+  function reconnectFile() {
+    if (!Store.handle) return Promise.resolve();
+    return Store.handle.requestPermission({ mode: "readwrite" }).then(function (state) {
+      if (state !== "granted") { toast("Permission denied", true); return; }
+      Store.needsPermission = false;
+      return Store.handle.getFile().then(function (file) { return file.text(); }).then(function (text) {
+        var fromFile = normalizeDb(JSON.parse(text));
+        var local = db;
+        // The file is the source of truth, but do not silently throw away work
+        // done in this browser while the file was disconnected.
+        var localNewer = JSON.stringify(local) !== JSON.stringify(fromFile);
+        if (localNewer && !confirm("Reconnected to " + Store.fileName + ".\n\n" +
+              "Load the file's contents (" + fromFile.questions.length + " questions)?\n\n" +
+              "OK = use the file.\nCancel = keep what is on screen and overwrite the file.")) {
+          return writeFileNow();
+        }
+        db = fromFile;
+        saveLocal();
+        render();
+      }).catch(function () {
+        // Empty or unreadable file: just write ours over it.
+        return writeFileNow();
+      });
+    }).then(function () {
+      renderStorageBar();
+    }).catch(function (err) {
+      toast(err.message || "Could not reconnect", true);
+    });
+  }
+
+  function unlinkFile() {
+    if (!confirm("Stop saving to " + Store.fileName + "?\n\nYour data stays in this browser, and the file keeps its last saved contents.")) return;
+    Store.handle = null;
+    Store.fileName = "";
+    Store.needsPermission = false;
+    idbHandle("delete");
+    renderStorageBar();
+    toast("Unlinked");
+  }
+
+  var storagebar = document.getElementById("storagebar");
+  var storageWhere = document.getElementById("storageWhere");
+  var linkBtn = document.getElementById("linkFile");
+  var reconnectBtn = document.getElementById("reconnectFile");
+  var openBtn = document.getElementById("openFile");
+  var unlinkBtn = document.getElementById("unlinkFile");
+
+  function renderStorageBar() {
+    storagebar.className = "storagebar";
+    linkBtn.hidden = true;
+    reconnectBtn.hidden = true;
+    openBtn.hidden = true;
+    unlinkBtn.hidden = true;
+
+    if (Store.handle && !Store.needsPermission) {
+      storagebar.classList.add("linked");
+      storageWhere.innerHTML = 'Saving every change to <span class="mono"></span>';
+      storageWhere.querySelector(".mono").textContent = Store.fileName;
+      openBtn.hidden = false;
+      unlinkBtn.hidden = false;
+      return;
+    }
+
+    if (Store.handle && Store.needsPermission) {
+      storagebar.classList.add("needs");
+      storageWhere.innerHTML = 'Linked to <span class="mono"></span> — the browser needs your permission again after a restart.';
+      storageWhere.querySelector(".mono").textContent = Store.fileName;
+      reconnectBtn.hidden = false;
+      unlinkBtn.hidden = false;
+      return;
+    }
+
+    if (FS_SUPPORTED) {
+      storageWhere.innerHTML = '<b>Saved in this browser.</b> Link a JSON file on disk to keep the data as a real file you can move, back up or commit.';
+      linkBtn.hidden = false;
+      openBtn.hidden = false;
+    } else {
+      storageWhere.innerHTML = '<b>Saved in this browser.</b> This browser cannot write files directly — use <b>Download JSON</b> to keep a copy, and <b>Import JSON</b> to load one back.';
+    }
+  }
+
+  linkBtn.addEventListener("click", linkNewFile);
+  reconnectBtn.addEventListener("click", reconnectFile);
+  openBtn.addEventListener("click", openExistingFile);
+  unlinkBtn.addEventListener("click", unlinkFile);
+
+  /* ============================================================= state ==== */
+
+  var db = { categories: [], questions: [] };
+  var filter = "all";
+  var search = "";
+  var openQuestions = {};
+  var collapsedCats = {};
+
+  try {
+    var storedCollapsed = JSON.parse(localStorage.getItem("drills.collapsed") || "[]");
+    storedCollapsed.forEach(function (id) { collapsedCats[id] = true; });
+  } catch (e) {}
+
+  function saveCollapsed() {
+    try { localStorage.setItem("drills.collapsed", JSON.stringify(Object.keys(collapsedCats))); } catch (e) {}
+  }
+
+  var $ = function (sel, root) { return (root || document).querySelector(sel); };
+  var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+
+  var ICONS = {
+    check: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5L6.2 12 13 4"/></svg>',
+    chev: '<svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4l7 6-7 6"/></svg>',
+    star: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8 1.8l1.9 3.9 4.3.6-3.1 3 .74 4.3L8 11.6l-3.84 2-.73-4.3-3.1-3 4.3-.6z"/></svg>',
+    starOn: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.8l1.9 3.9 4.3.6-3.1 3 .74 4.3L8 11.6l-3.84 2-.73-4.3-3.1-3 4.3-.6z"/></svg>',
+    trash: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 4h10.4M6.4 4V2.6h3.2V4M4.2 4l.6 9h6.4l.6-9M6.6 6.4v4.2M9.4 6.4v4.2"/></svg>',
+    pencil: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11.2 2.4l2.4 2.4L5.6 12.8 2.4 13.6l.8-3.2z"/></svg>'
+  };
+
+  var toastEl = $("#toast");
+  var toastTimer = null;
+  function toast(message, isError) {
+    toastEl.textContent = message;
+    toastEl.classList.toggle("error", !!isError);
+    toastEl.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.hidden = true; }, isError ? 5000 : 1900);
+  }
+
+  function debounce(fn, ms) {
+    var t = null;
+    return function () {
+      var args = arguments, self = this;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(self, args); }, ms);
+    };
+  }
+
+  function sortedCategories() {
+    return db.categories.slice().sort(function (a, b) { return a.order - b.order; });
+  }
+  function questionsOf(categoryId) {
+    return db.questions.filter(function (q) { return q.categoryId === categoryId; })
+      .sort(function (a, b) { return a.order - b.order; });
+  }
+  function localQuestion(id) {
+    return db.questions.filter(function (q) { return q.id === id; })[0] || null;
+  }
+  function categoryById(id) {
+    return db.categories.filter(function (c) { return c.id === id; })[0] || null;
+  }
+
+  function uniqueCode(desired, ignoreId) {
+    var base = String(desired || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4) || "CAT";
+    var taken = {};
+    db.categories.forEach(function (c) { if (c.id !== ignoreId) taken[c.code] = true; });
+    if (!taken[base]) return base;
+    for (var i = 2; i < 100; i++) {
+      var candidate = base.slice(0, 3) + i;
+      if (!taken[candidate]) return candidate;
+    }
+    return base + Date.now().toString(36).slice(-2).toUpperCase();
+  }
+
+  function matchesFilter(q) {
+    if (filter === "todo") return q.status !== "reviewed";
+    if (filter === "done") return q.status === "reviewed";
+    if (filter === "starred") return q.starred === true;
+    if (filter === "unanswered") return !q.answer.trim();
+    return true;
+  }
+  function matchesSearch(q) {
+    if (!search) return true;
+    var needle = search.toLowerCase();
+    return q.text.toLowerCase().indexOf(needle) !== -1 || q.answer.toLowerCase().indexOf(needle) !== -1;
+  }
+  function isVisible(q) { return matchesFilter(q) && matchesSearch(q); }
+
+  /* ============================================================ render ==== */
+
+  var categoriesEl = $("#categories");
+  var jumpEl = $("#jumpNav");
+  var emptyEl = $("#emptyState");
+
+  function render() {
+    categoriesEl.textContent = "";
+    jumpEl.textContent = "";
+
+    sortedCategories().forEach(function (cat) {
+      categoriesEl.appendChild(renderCategory(cat));
+
+      var link = document.createElement("a");
+      link.href = "#cat-" + cat.id;
+      link.textContent = cat.code + " ";
+      var n = document.createElement("span");
+      n.className = "n";
+      n.textContent = questionsOf(cat.id).length;
+      link.appendChild(n);
+      link.addEventListener("click", function () {
+        var det = document.getElementById("cat-" + cat.id);
+        if (det) { det.open = true; delete collapsedCats[cat.id]; saveCollapsed(); }
+      });
+      jumpEl.appendChild(link);
+    });
+
+    categoriesEl.appendChild(renderAddCategory());
+    refreshCounts();
+    applyFilter();
+  }
+
+  function renderCategory(cat) {
+    var questions = questionsOf(cat.id);
+
+    var det = document.createElement("details");
+    det.className = "cat";
+    det.id = "cat-" + cat.id;
+    det.open = !collapsedCats[cat.id];
+    det.dataset.categoryId = cat.id;
+
+    var summary = document.createElement("summary");
+
+    var tag = document.createElement("span");
+    tag.className = "catTag";
+    tag.textContent = cat.code;
+
+    var title = document.createElement("span");
+    title.className = "catTitle";
+    title.textContent = cat.title;
+    title.title = "Double-click to rename";
+    title.addEventListener("dblclick", function (ev) { ev.preventDefault(); renameCategory(cat); });
+
+    var count = document.createElement("span");
+    count.className = "catCount";
+    count.dataset.countFor = cat.id;
+    count.textContent = "0/" + questions.length;
+
+    var del = document.createElement("button");
+    del.className = "iconbtn danger";
+    del.type = "button";
+    del.title = "Delete category and its questions";
+    del.innerHTML = ICONS.trash;
+    del.addEventListener("click", function (ev) {
+      ev.preventDefault(); ev.stopPropagation(); deleteCategory(cat);
+    });
+
+    summary.appendChild(tag);
+    summary.appendChild(title);
+    summary.appendChild(count);
+    summary.appendChild(del);
+    summary.insertAdjacentHTML("beforeend", ICONS.chev);
+    det.appendChild(summary);
+
+    det.addEventListener("toggle", function () {
+      if (det.open) delete collapsedCats[cat.id]; else collapsedCats[cat.id] = true;
+      saveCollapsed();
+    });
+
+    var body = document.createElement("div");
+    body.className = "catBody";
+    questions.forEach(function (q, index) { body.appendChild(renderQuestion(cat, q, index)); });
+    body.appendChild(renderAddQuestion(cat));
+    det.appendChild(body);
+
+    return det;
+  }
+
+  function renderQuestion(cat, q, index) {
+    var displayId = cat.code + "-" + String(index + 1).padStart(2, "0");
+
+    var row = document.createElement("div");
+    row.className = "qrow";
+    row.dataset.id = q.id;
+    row.classList.toggle("done", q.status === "reviewed");
+    var isOpen = !!openQuestions[q.id];
+    row.classList.toggle("open", isOpen);
+
+    var head = document.createElement("div");
+    head.className = "qhead";
+
+    var check = document.createElement("button");
+    check.className = "qcheck";
+    check.type = "button";
+    check.title = "Mark reviewed";
+    check.setAttribute("aria-label", "Mark " + displayId + " as reviewed");
+    check.innerHTML = ICONS.check;
+    check.addEventListener("click", function () { toggleReviewed(q.id); });
+
+    var idSpan = document.createElement("span");
+    idSpan.className = "qid mono";
+    idSpan.textContent = displayId;
+
+    var main = document.createElement("div");
+    main.className = "qmain";
+    var text = document.createElement("div");
+    text.className = "qtext";
+    text.textContent = q.text;
+    main.appendChild(text);
+
+    var flags = document.createElement("div");
+    flags.className = "qflags";
+    var flag = document.createElement("span");
+    var answered = !!q.answer.trim();
+    flag.className = answered ? "flag" : "flag muted";
+    flag.textContent = answered ? "answered" : "no answer yet";
+    flags.appendChild(flag);
+    main.appendChild(flags);
+    main.addEventListener("click", function () { toggleOpen(q.id); });
+
+    var tools = document.createElement("div");
+    tools.className = "qtools";
+
+    var star = document.createElement("button");
+    star.className = "iconbtn" + (q.starred ? " starred" : "");
+    star.type = "button";
+    star.title = q.starred ? "Unstar" : "Star this question";
+    star.innerHTML = q.starred ? ICONS.starOn : ICONS.star;
+    star.addEventListener("click", function () { toggleStar(q.id); });
+
+    var edit = document.createElement("button");
+    edit.className = "iconbtn";
+    edit.type = "button";
+    edit.title = "Edit question and answer";
+    edit.innerHTML = ICONS.pencil;
+    edit.addEventListener("click", function () { toggleOpen(q.id); });
+
+    tools.appendChild(star);
+    tools.appendChild(edit);
+
+    head.appendChild(check);
+    head.appendChild(idSpan);
+    head.appendChild(main);
+    head.appendChild(tools);
+    row.appendChild(head);
+
+    /* editor */
+    var body = document.createElement("div");
+    body.className = "qbody";
+    body.hidden = !isOpen;
+
+    var qLabel = document.createElement("p");
+    qLabel.className = "qlabel";
+    qLabel.textContent = "Question";
+    var qArea = document.createElement("textarea");
+    qArea.className = "textline";
+    qArea.rows = 2;
+    qArea.value = q.text;
+
+    var aLabel = document.createElement("p");
+    aLabel.className = "qlabel";
+    aLabel.style.marginTop = "12px";
+    aLabel.textContent = "Your answer";
+    var aArea = document.createElement("textarea");
+    aArea.className = "answer";
+    aArea.placeholder = "Write the answer in your own words — the version you would actually say out loud.";
+    aArea.value = q.answer;
+
+    var foot = document.createElement("div");
+    foot.className = "qbodyfoot";
+
+    var spacer = document.createElement("span");
+    spacer.className = "spacer";
+
+    var moveLabel = document.createElement("span");
+    moveLabel.textContent = "Category:";
+
+    var select = document.createElement("select");
+    select.className = "btn small";
+    sortedCategories().forEach(function (c) {
+      var opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.code + " · " + c.title;
+      if (c.id === q.categoryId) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.addEventListener("change", function () {
+      var target = localQuestion(q.id);
+      if (!target) return;
+      target.categoryId = select.value;
+      target.order = questionsOf(select.value).length;
+      target.updatedAt = nowIso();
+      persist();
+      render();
+    });
+
+    var removeBtn = document.createElement("button");
+    removeBtn.className = "iconbtn danger";
+    removeBtn.type = "button";
+    removeBtn.title = "Delete this question";
+    removeBtn.innerHTML = ICONS.trash;
+    removeBtn.addEventListener("click", function () { deleteQuestion(q); });
+
+    foot.appendChild(spacer);
+    foot.appendChild(moveLabel);
+    foot.appendChild(select);
+    foot.appendChild(removeBtn);
+
+    function bindField(field, el) {
+      var flush = function () {
+        var current = localQuestion(q.id);
+        if (!current || current[field] === el.value) return;
+        if (field === "text" && !el.value.trim()) { el.value = current.text; return; }
+        current[field] = el.value;
+        current.updatedAt = nowIso();
+        persist();
+        if (field === "text") {
+          var live = row.querySelector(".qtext");
+          if (live) live.textContent = current.text;
+        } else {
+          var isAnswered = !!current.answer.trim();
+          flag.className = isAnswered ? "flag" : "flag muted";
+          flag.textContent = isAnswered ? "answered" : "no answer yet";
+          refreshCounts();
+        }
+      };
+      el.addEventListener("input", debounce(flush, 400));
+      el.addEventListener("blur", flush);
+    }
+    bindField("text", qArea);
+    bindField("answer", aArea);
+
+    body.appendChild(qLabel);
+    body.appendChild(qArea);
+    body.appendChild(aLabel);
+    body.appendChild(aArea);
+    body.appendChild(foot);
+    row.appendChild(body);
+
+    return row;
+  }
+
+  function renderAddQuestion(cat) {
+    var wrap = document.createElement("div");
+    wrap.className = "addrow";
+
+    var button = document.createElement("button");
+    button.className = "addbtn";
+    button.type = "button";
+    button.textContent = "+ Add a question to " + cat.title;
+
+    var form = document.createElement("form");
+    form.className = "addform";
+    form.hidden = true;
+
+    var area = document.createElement("textarea");
+    area.className = "textline";
+    area.rows = 2;
+    area.placeholder = "New question…";
+
+    var submit = document.createElement("button");
+    submit.className = "btn primary";
+    submit.type = "submit";
+    submit.textContent = "Add";
+
+    form.appendChild(area);
+    form.appendChild(submit);
+
+    button.addEventListener("click", function () {
+      button.hidden = true;
+      form.hidden = false;
+      area.focus();
+    });
+
+    area.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); form.requestSubmit(); }
+      if (ev.key === "Escape") { form.hidden = true; button.hidden = false; area.value = ""; }
+    });
+
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var text = area.value.trim();
+      if (!text) return;
+      var now = nowIso();
+      db.questions.push({
+        id: makeId("q"), categoryId: cat.id, text: text, answer: "",
+        status: "todo", starred: false, order: questionsOf(cat.id).length,
+        createdAt: now, updatedAt: now, reviewedAt: null
+      });
+      persist();
+      area.value = "";
+      render();
+      toast("Question added");
+      var det = document.getElementById("cat-" + cat.id);
+      if (det) {
+        var nextBtn = $(".addbtn", det);
+        if (nextBtn) nextBtn.click();
+      }
+    });
+
+    wrap.appendChild(button);
+    wrap.appendChild(form);
+    return wrap;
+  }
+
+  function renderAddCategory() {
+    var wrap = document.createElement("div");
+    wrap.className = "addrow";
+    wrap.id = "addCategoryRow";
+
+    var form = document.createElement("form");
+    form.className = "addform";
+    form.hidden = true;
+
+    var titleInput = document.createElement("input");
+    titleInput.className = "textline";
+    titleInput.placeholder = "New category name, e.g. System Design";
+
+    var codeInput = document.createElement("input");
+    codeInput.className = "textline";
+    codeInput.placeholder = "Code";
+    codeInput.style.maxWidth = "90px";
+    codeInput.maxLength = 4;
+
+    var submit = document.createElement("button");
+    submit.className = "btn primary";
+    submit.type = "submit";
+    submit.textContent = "Add";
+
+    form.appendChild(titleInput);
+    form.appendChild(codeInput);
+    form.appendChild(submit);
+
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var title = titleInput.value.trim();
+      if (!title) return;
+      db.categories.push({
+        id: makeId("c"),
+        code: uniqueCode(codeInput.value.trim() || title.replace(/[^A-Za-z0-9]/g, "").slice(0, 2), null),
+        title: title,
+        order: db.categories.length,
+        createdAt: nowIso()
+      });
+      persist();
+      titleInput.value = "";
+      codeInput.value = "";
+      render();
+      toast("Category added");
+    });
+
+    titleInput.addEventListener("keydown", function (ev) { if (ev.key === "Escape") form.hidden = true; });
+
+    wrap.appendChild(form);
+    return wrap;
+  }
+
+  /* ============================================================ mutate ==== */
+
+  function toggleReviewed(id) {
+    var q = localQuestion(id);
+    if (!q) return;
+    q.status = q.status === "reviewed" ? "todo" : "reviewed";
+    q.reviewedAt = q.status === "reviewed" ? nowIso() : null;
+    q.updatedAt = nowIso();
+    persist();
+    var row = categoriesEl.querySelector('.qrow[data-id="' + id + '"]');
+    if (row) row.classList.toggle("done", q.status === "reviewed");
+    refreshCounts();
+    applyFilter();
+  }
+
+  function toggleStar(id) {
+    var q = localQuestion(id);
+    if (!q) return;
+    q.starred = !q.starred;
+    q.updatedAt = nowIso();
+    persist();
+    var row = categoriesEl.querySelector('.qrow[data-id="' + id + '"]');
+    if (row) {
+      var btn = $(".qtools .iconbtn", row);
+      btn.classList.toggle("starred", q.starred);
+      btn.innerHTML = q.starred ? ICONS.starOn : ICONS.star;
+      btn.title = q.starred ? "Unstar" : "Star this question";
+    }
+    applyFilter();
+  }
+
+  function toggleOpen(id) {
+    var row = categoriesEl.querySelector('.qrow[data-id="' + id + '"]');
+    if (!row) return;
+    var body = $(".qbody", row);
+    var willOpen = body.hidden;
+    body.hidden = !willOpen;
+    row.classList.toggle("open", willOpen);
+    if (willOpen) {
+      openQuestions[id] = true;
+      var area = $("textarea.answer", body);
+      if (area) area.focus();
+    } else {
+      delete openQuestions[id];
+    }
+  }
+
+  function deleteQuestion(q) {
+    if (!confirm("Delete this question?\n\n" + q.text)) return;
+    db.questions = db.questions.filter(function (item) { return item.id !== q.id; });
+    delete openQuestions[q.id];
+    persist();
+    render();
+    toast("Question deleted");
+  }
+
+  function deleteCategory(cat) {
+    var count = questionsOf(cat.id).length;
+    if (!confirm('Delete the category "' + cat.title + '" and its ' + count + " question(s)?")) return;
+    db.questions = db.questions.filter(function (q) { return q.categoryId !== cat.id; });
+    db.categories = db.categories.filter(function (c) { return c.id !== cat.id; });
+    persist();
+    render();
+    toast("Category deleted");
+  }
+
+  function renameCategory(cat) {
+    var title = prompt("Category name:", cat.title);
+    if (title === null) return;
+    title = title.trim();
+    if (!title) return;
+    var code = prompt("Short code (up to 4 characters):", cat.code);
+    cat.title = title;
+    cat.code = uniqueCode((code === null ? cat.code : code.trim()) || cat.code, cat.id);
+    persist();
+    render();
+  }
+
+  /* =================================================== counts and filter == */
+
+  var statReviewed = $("#statReviewed");
+  var statAnswered = $("#statAnswered");
+  var statTrack = $("#statTrack");
+
+  function refreshCounts() {
+    var doneAll = 0, answeredAll = 0;
+
+    db.categories.forEach(function (cat) {
+      var list = questionsOf(cat.id);
+      var doneCat = list.filter(function (q) { return q.status === "reviewed"; }).length;
+      var el = categoriesEl.querySelector('[data-count-for="' + cat.id + '"]');
+      if (el) el.textContent = doneCat + "/" + list.length;
+      doneAll += doneCat;
+    });
+
+    db.questions.forEach(function (q) { if (q.answer.trim()) answeredAll++; });
+
+    var total = db.questions.length;
+    statReviewed.textContent = doneAll + " / " + total;
+    statAnswered.textContent = String(answeredAll);
+    statTrack.style.width = (total ? (doneAll / total * 100) : 0) + "%";
+  }
+
+  function applyFilter() {
+    var anyVisible = false;
+    var filtering = filter !== "all" || search !== "";
+
+    $$("details.cat", categoriesEl).forEach(function (det) {
+      var categoryId = det.dataset.categoryId;
+      var visibleInCat = 0;
+
+      $$(".qrow", det).forEach(function (row) {
+        var q = localQuestion(row.dataset.id);
+        var show = q ? isVisible(q) : false;
+        row.hidden = !show;
+        if (show) visibleInCat++;
+      });
+
+      var list = questionsOf(categoryId);
+      det.hidden = filtering && visibleInCat === 0 && list.length > 0;
+      var addRow = $(".addrow", det);
+      if (addRow) addRow.hidden = filtering;
+      if (visibleInCat > 0) anyVisible = true;
+      if (filtering && visibleInCat > 0) det.open = true;
+    });
+
+    emptyEl.hidden = anyVisible || db.questions.length === 0;
+  }
+
+  /* ======================================================== drill mode ==== */
+
+  var drillOverlay = $("#drillOverlay");
+  var drillQueue = [];
+  var drillIndex = 0;
+
+  function startDrill() {
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    drillQueue = db.questions.filter(isVisible);
+    if (!drillQueue.length) drillQueue = db.questions.slice();
+    if (!drillQueue.length) { toast("No questions to drill yet", true); return; }
+    for (var i = drillQueue.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = drillQueue[i]; drillQueue[i] = drillQueue[j]; drillQueue[j] = tmp;
+    }
+    drillIndex = 0;
+    drillOverlay.hidden = false;
+    showDrill();
+  }
+
+  function showDrill() {
+    if (drillIndex >= drillQueue.length) { closeDrill(); toast("Deck finished — nice."); return; }
+    var fresh = localQuestion(drillQueue[drillIndex].id);
+    if (!fresh) { drillIndex++; return showDrill(); }
+    var cat = categoryById(fresh.categoryId);
+
+    $("#drillTag").textContent = cat ? cat.code : "??";
+    $("#drillMeta").textContent = (drillIndex + 1) + " of " + drillQueue.length +
+      (fresh.status === "reviewed" ? " · reviewed" : "");
+    $("#drillQuestion").textContent = fresh.text;
+
+    var answerEl = $("#drillAnswer");
+    var hasAnswer = !!fresh.answer.trim();
+    answerEl.textContent = hasAnswer ? fresh.answer : "You have not written an answer for this one yet.";
+    answerEl.className = hasAnswer ? "answerText" : "answerText blank";
+    $("#drillAnswerWrap").hidden = true;
+    $("#drillReveal").hidden = false;
+  }
+
+  function revealDrill() {
+    $("#drillAnswerWrap").hidden = false;
+    $("#drillReveal").hidden = true;
+  }
+
+  function closeDrill() { drillOverlay.hidden = true; }
+
+  function drillAdvance(markReviewed) {
+    var current = drillQueue[drillIndex];
+    if (markReviewed && current) {
+      var q = localQuestion(current.id);
+      if (q && q.status !== "reviewed") {
+        q.status = "reviewed";
+        q.reviewedAt = nowIso();
+        q.updatedAt = nowIso();
+        persist();
+        var row = categoriesEl.querySelector('.qrow[data-id="' + q.id + '"]');
+        if (row) row.classList.add("done");
+        refreshCounts();
+      }
+    }
+    drillIndex++;
+    showDrill();
+  }
+
+  $("#startDrill").addEventListener("click", startDrill);
+  $("#drillClose").addEventListener("click", closeDrill);
+  $("#drillReveal").addEventListener("click", revealDrill);
+  $("#drillSkip").addEventListener("click", function () { drillAdvance(false); });
+  $("#drillGot").addEventListener("click", function () { drillAdvance(true); });
+  drillOverlay.addEventListener("click", function (ev) { if (ev.target === drillOverlay) closeDrill(); });
+
+  /* =========================================================== toolbar ==== */
+
+  $$(".chip[data-filter]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      filter = btn.dataset.filter;
+      $$(".chip[data-filter]").forEach(function (other) {
+        other.setAttribute("aria-pressed", other === btn ? "true" : "false");
+      });
+      applyFilter();
+    });
+  });
+
+  var searchInput = $("#search");
+  searchInput.addEventListener("input", debounce(function () {
+    search = searchInput.value.trim();
+    applyFilter();
+  }, 150));
+
+  $("#expandAll").addEventListener("click", function () {
+    $$("details.cat").forEach(function (d) { d.open = true; });
+    collapsedCats = {};
+    saveCollapsed();
+  });
+  $("#collapseAll").addEventListener("click", function () {
+    collapsedCats = {};
+    $$("details.cat").forEach(function (d) { d.open = false; collapsedCats[d.dataset.categoryId] = true; });
+    saveCollapsed();
+  });
+
+  $("#addCategory").addEventListener("click", function () {
+    var row = $("#addCategoryRow");
+    var form = $("form", row);
+    form.hidden = false;
+    row.scrollIntoView({ behavior: "smooth", block: "center" });
+    $("input", form).focus();
+  });
+
+  $("#resetProgress").addEventListener("click", function () {
+    if (!confirm("Clear every reviewed mark?\n\nYour written answers are kept.")) return;
+    db.questions.forEach(function (q) {
+      q.status = "todo";
+      q.reviewedAt = null;
+      q.updatedAt = nowIso();
+    });
+    persist();
+    render();
+    toast("Progress reset");
+  });
+
+  $("#exportBtn").addEventListener("click", function () {
+    var blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "drills-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  });
+
+  var importFile = $("#importFile");
+  $("#importBtn").addEventListener("click", function () { importFile.click(); });
+  importFile.addEventListener("change", function () {
+    var file = importFile.files && importFile.files[0];
+    if (!file) return;
+    file.text().then(function (text) {
+      var incoming = normalizeDb(JSON.parse(text));
+      if (!confirm("Replace everything with " + file.name + "?\n\n" +
+                   incoming.questions.length + " questions in " + incoming.categories.length + " categories.")) return;
+      db = incoming;
+      persist();
+      render();
+      toast("Imported " + db.questions.length + " questions");
+    }).catch(function (err) {
+      toast(err.message || "Could not read that file", true);
+    }).then(function () { importFile.value = ""; });
+  });
+
+  /* ============================================================= theme ==== */
+
+  var THEME_KEY = "drills.theme";
+  function applyTheme(value) {
+    document.documentElement.setAttribute("data-theme", value === "system" ? "" : value);
+  }
+  var theme = "system";
+  try { theme = localStorage.getItem(THEME_KEY) || "system"; } catch (e) {}
+  applyTheme(theme);
+  $("#themeBtn").addEventListener("click", function () {
+    theme = theme === "system" ? "light" : theme === "light" ? "dark" : "system";
+    try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+    applyTheme(theme);
+    toast("Theme: " + theme);
+  });
+
+  /* ========================================================= shortcuts ==== */
+
+  document.addEventListener("keydown", function (ev) {
+    if (!drillOverlay.hidden) {
+      if (ev.key === "Escape") { ev.preventDefault(); closeDrill(); }
+      else if (ev.key === " " || ev.code === "Space" || ev.key === "Enter") {
+        ev.preventDefault();
+        if ($("#drillAnswerWrap").hidden) revealDrill(); else drillAdvance(true);
+      } else if (ev.key === "ArrowRight") { ev.preventDefault(); drillAdvance(false); }
+      return;
+    }
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) {
+      if (ev.key === "Escape") ev.target.blur();
+      return;
+    }
+    if (ev.key === "/") { ev.preventDefault(); searchInput.focus(); }
+    if (ev.key === "d") { ev.preventDefault(); startDrill(); }
+  });
+
+  // A last-chance flush, in case a debounced file write is still pending.
+  window.addEventListener("beforeunload", function () {
+    clearTimeout(pendingFileWrite);
+    saveLocal();
+  });
+
+  /* ============================================================== boot ==== */
+
+  db = loadLocal() || buildSeedDb();
+  render();
+  renderStorageBar();
+  if (!loadLocal()) persist();
+
+  idbHandle("get").then(function (handle) {
+    if (!handle) return;
+    Store.handle = handle;
+    Store.fileName = handle.name;
+    return handle.queryPermission({ mode: "readwrite" }).then(function (state) {
+      if (state === "granted") {
+        Store.needsPermission = false;
+        return handle.getFile().then(function (file) { return file.text(); }).then(function (text) {
+          db = normalizeDb(JSON.parse(text));
+          saveLocal();
+          render();
+        }).catch(function () { /* unreadable or empty file: keep what we have */ });
+      }
+      // Chrome drops file permission between sessions; it takes one click to restore.
+      Store.needsPermission = true;
+    });
+  }).catch(function () {}).then(function () {
+    renderStorageBar();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" data-theme="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frontend Interview Drills</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">Interview Prep · Frontend</p>
+    <h1>Frontend Interview Drills</h1>
+    <p class="sub">Theory questions across your stack. Write your own answer to each one, mark it reviewed when you can say it out loud, and add questions as you meet them. Everything is stored in <span class="mono">data/db.json</span>.</p>
+
+    <div class="statbar">
+      <div class="figure">
+        <span class="num" id="statReviewed">0 / 0</span>
+        <span class="lbl">Reviewed</span>
+      </div>
+      <div class="figure">
+        <span class="num" id="statAnswered">0</span>
+        <span class="lbl">Answered</span>
+      </div>
+      <div class="track"><span id="statTrack"></span></div>
+      <div class="controls">
+        <button class="chip" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" data-filter="todo" aria-pressed="false">To review</button>
+        <button class="chip" data-filter="done" aria-pressed="false">Reviewed</button>
+        <button class="chip" data-filter="starred" aria-pressed="false">Starred</button>
+        <button class="chip" data-filter="unanswered" aria-pressed="false">No answer</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="searchrow">
+    <div class="searchbox">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="9" r="5.5"/><path d="M13 13l4 4"/></svg>
+      <input type="search" id="search" placeholder="Search questions and answers…" autocomplete="off" spellcheck="false">
+    </div>
+    <button class="btn primary" id="startDrill">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 3.2v9.6c0 .5.55.8.96.53l7.2-4.8a.64.64 0 000-1.06l-7.2-4.8a.64.64 0 00-.96.53z"/></svg>
+      Drill me
+    </button>
+  </div>
+
+  <div class="toolrow">
+    <button class="ghost" id="expandAll">Expand all</button>
+    <button class="ghost" id="collapseAll">Collapse all</button>
+    <button class="ghost" id="addCategory">+ Category</button>
+    <span class="spacer"></span>
+    <button class="ghost" id="exportBtn">Export</button>
+    <button class="ghost" id="importBtn">Import</button>
+    <button class="ghost" id="themeBtn">Theme</button>
+    <button class="ghost danger" id="resetProgress">Reset progress</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+
+  <nav class="jump" id="jumpNav"></nav>
+
+  <main id="categories"></main>
+
+  <p class="empty" id="emptyState" hidden>Nothing matches this filter.</p>
+
+  <footer class="note">
+    Questions are prompts to research and rehearse, not a scored quiz. Your answers, marks and any questions you add are written straight to <span class="mono">data/db.json</span> — back that file up, commit it, or copy it anywhere you like.
+  </footer>
+
+</div>
+
+<!-- Drill mode -->
+<div class="overlay" id="drillOverlay" hidden>
+  <div class="drill" role="dialog" aria-modal="true" aria-labelledby="drillQuestion">
+    <div class="drillHead">
+      <span class="catTag" id="drillTag">JS</span>
+      <span class="drillMeta" id="drillMeta">1 of 12</span>
+      <button class="iconbtn" id="drillClose" aria-label="Close drill">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+      </button>
+    </div>
+    <p class="drillQ" id="drillQuestion"></p>
+    <div class="drillAnswer" id="drillAnswerWrap" hidden>
+      <p class="drillLabel">Your answer</p>
+      <div class="answerText" id="drillAnswer"></div>
+    </div>
+    <div class="drillActions">
+      <button class="btn" id="drillReveal">Reveal answer</button>
+      <span class="spacer"></span>
+      <button class="btn" id="drillSkip">Skip</button>
+      <button class="btn good" id="drillGot">Got it</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="/app.js"></script>
+</body>
+</html>
