@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Category, Question } from "@/lib/schema";
+import { highlightAnswer } from "@/lib/highlight";
 import { Close } from "./icons";
 
 export function DrillOverlay({
@@ -77,9 +78,16 @@ export function DrillOverlay({
         {revealed && (
           <div className="drillAnswer">
             <p className="drillLabel">Your answer</p>
-            <div className={hasAnswer ? "answerText" : "answerText blank"}>
-              {hasAnswer ? current.answer : "You have not written an answer for this one yet."}
-            </div>
+            {hasAnswer ? (
+              <div
+                className="answerText"
+                dangerouslySetInnerHTML={{ __html: highlightAnswer(current.answer) }}
+              />
+            ) : (
+              <div className="answerText blank">
+                You have not written an answer for this one yet.
+              </div>
+            )}
           </div>
         )}
 

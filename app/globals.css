@@ -16,6 +16,17 @@
   --border: #dfe3ed;
   --shadow: 0 1px 2px rgba(23, 27, 38, 0.04), 0 8px 24px -12px rgba(23, 27, 38, 0.1);
   --radius: 14px;
+  --select: rgba(54, 81, 212, 0.2);
+  /* VS Code Light+ */
+  --hl-fg: #000000;
+  --hl-comment: #008000;
+  --hl-string: #a31515;
+  --hl-number: #098658;
+  --hl-control: #af00db;
+  --hl-keyword: #0000ff;
+  --hl-type: #267f99;
+  --hl-fn: #795e26;
+  --hl-var: #001080;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +47,17 @@
     --star: #e8be49;
     --border: #262c3b;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+    --select: rgba(130, 152, 255, 0.28);
+    /* VS Code Dark+ */
+    --hl-fg: #d4d4d4;
+    --hl-comment: #6a9955;
+    --hl-string: #ce9178;
+    --hl-number: #b5cea8;
+    --hl-control: #c586c0;
+    --hl-keyword: #569cd6;
+    --hl-type: #4ec9b0;
+    --hl-fn: #dcdcaa;
+    --hl-var: #9cdcfe;
   }
 }
 
@@ -56,6 +78,17 @@
   --star: #e8be49;
   --border: #262c3b;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  --select: rgba(130, 152, 255, 0.28);
+  /* VS Code Dark+ */
+  --hl-fg: #d4d4d4;
+  --hl-comment: #6a9955;
+  --hl-string: #ce9178;
+  --hl-number: #b5cea8;
+  --hl-control: #c586c0;
+  --hl-keyword: #569cd6;
+  --hl-type: #4ec9b0;
+  --hl-fn: #dcdcaa;
+  --hl-var: #9cdcfe;
 }
 
 * {
@@ -574,54 +607,180 @@ details.cat[open] > summary .chev {
 
 .qbody {
   padding: 0 10px 12px 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.qlabel {
+/* A small editor panel: labelled bar on top, monospace body that grows to fit. */
+.editor {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+.editor:focus-within {
+  border-color: var(--accent-soft-border);
+}
+
+.editorBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
   font-family: var(--font-mono), monospace;
   font-size: 10.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-faint);
-  margin: 0 0 6px;
+  user-select: none;
+}
+.editorName {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.editorName::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 99px;
+  background: var(--accent);
+  margin-right: 7px;
+  vertical-align: middle;
+  opacity: 0.55;
+}
+.editor:focus-within .editorName::before {
+  opacity: 1;
+}
+.editorMeta {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
 }
 
-textarea.answer,
-input.textline,
-textarea.textline {
-  width: 100%;
-  font-family: inherit;
-  font-size: 14px;
-  line-height: 1.6;
+/* --- syntax overlay -------------------------------------------------------
+   The <pre> sits directly behind a textarea whose text is transparent. Every
+   property that affects text layout must be identical on both, or the two
+   drift apart as lines wrap. Keep .hlLayer and .editorArea in sync. */
+
+.editorStack {
+  position: relative;
+}
+
+.hlLayer,
+.editorStack .editorArea {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.75;
+  letter-spacing: normal;
+  padding: 12px 14px;
+  border: none;
+  tab-size: 2;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.hlLayer {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
   color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 11px 13px;
-  outline: none;
-  resize: vertical;
+  background: transparent;
 }
-textarea.answer {
-  min-height: 110px;
+
+.editorStack .editorArea {
+  position: relative;
+  color: transparent;
+  background: transparent;
+  caret-color: var(--accent);
 }
-textarea.answer:focus,
-input.textline:focus,
-textarea.textline:focus {
-  border-color: var(--accent-soft-border);
+
+/* Translucent, so the highlighted text underneath stays readable when selected. */
+.editorStack .editorArea::selection {
+  background: var(--select);
 }
-textarea.answer::placeholder,
-input.textline::placeholder {
+
+.hl-fence {
   color: var(--text-faint);
 }
+/* Punctuation and operators inherit this, as they do in the editor. */
+.hl-code {
+  color: var(--hl-fg);
+}
+.hl-comment {
+  color: var(--hl-comment);
+}
+.hl-string {
+  color: var(--hl-string);
+}
+.hl-number {
+  color: var(--hl-number);
+}
+.hl-control {
+  color: var(--hl-control);
+}
+.hl-keyword {
+  color: var(--hl-keyword);
+}
+.hl-type {
+  color: var(--hl-type);
+}
+.hl-fn {
+  color: var(--hl-fn);
+}
+.hl-var {
+  color: var(--hl-var);
+}
 
-select.textline {
-  width: auto;
+/* Height is driven by JS (useAutosize), so never show a scrollbar or a grip. */
+.editorArea {
+  display: block;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.75;
+  padding: 12px 14px;
+  tab-size: 2;
+  caret-color: var(--accent);
+}
+.editorArea::placeholder {
+  color: var(--text-faint);
+  font-family: var(--font-sans), sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.editorArea::selection {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+/* The question itself is prose, not code. */
+.editorArea.prose {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.answerEditor .editorArea {
+  min-height: 88px;
 }
 
 .qbodyfoot {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 8px;
   font-size: 12px;
   color: var(--text-faint);
 }
@@ -630,7 +789,11 @@ select.textline {
 }
 .savehint {
   font-family: var(--font-mono), monospace;
-  font-size: 11px;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-width: 58px;
+  text-align: right;
 }
 .savehint.saving {
   color: var(--accent);
@@ -748,13 +911,16 @@ footer.note {
   margin: 0 0 8px;
 }
 .answerText {
-  font-size: 14.5px;
-  line-height: 1.6;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.75;
   white-space: pre-wrap;
   color: var(--text);
   word-break: break-word;
 }
 .answerText.blank {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 14px;
   color: var(--text-faint);
   font-style: italic;
 }

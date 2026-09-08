@@ -9,11 +9,17 @@ import GitHub from "next-auth/providers/github";
  * public URL, auth is skipped entirely so `npm run dev` works with no setup.
  */
 
-export const isAuthConfigured = Boolean(
-  process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET,
-);
-
 export const isProduction = process.env.NODE_ENV === "production";
+
+/**
+ * AUTH_DISABLED=1 skips sign-in so `npm run dev` works on localhost, where the
+ * GitHub callback URL does not point. Deliberately gated on NODE_ENV, so it can
+ * never switch auth off in a deployment however the variable gets set there.
+ */
+const disabledForLocalDev = !isProduction && process.env.AUTH_DISABLED === "1";
+
+export const isAuthConfigured =
+  !disabledForLocalDev && Boolean(process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET);
 
 const allowedLogins = (process.env.ALLOWED_LOGIN ?? "")
   .split(",")
