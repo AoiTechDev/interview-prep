@@ -1,0 +1,14 @@
+{
+  "name": "interview-drills",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local app for drilling frontend interview questions. Data lives in data/db.json.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
